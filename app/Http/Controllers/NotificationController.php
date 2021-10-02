@@ -36,8 +36,7 @@ class NotificationController extends Controller
 
     public function getOrderActivity()
     {   
-        $data = [];
-
+      
         if($this->authorizeUser('isAdmin') ) {
 
             $collection = \DB::table('audits')
@@ -60,30 +59,28 @@ class NotificationController extends Controller
                 })
             ];
             
-        }else{
-
-            $collection = \DB::table('audits')
-                    ->where('user_id',auth()->id())
-                    ->get();
-
-            return [
-                'data' => $collection->map(function($data) {
-                    return [
-                        'id'         => $data->id,
-                        'user'       => \App\Models\User::find($data->user_id)->name . ' whose user id is '.$data->user_id,
-                        'event'      => $data->event,
-                        'old_values' => json_decode($data->old_values),
-                        'new_values' => json_decode($data->new_values),
-                        'url'        => $data->url,
-                        'ip_address' => $data->ip_address,
-                        'user_agent' => $data->user_agent,
-                        'created_at' => \Carbon\Carbon::parse($data->created_at)->toDayDateTimeString(),
-                        'updated_at' => \Carbon\Carbon::parse($data->updated_at)->toDayDateTimeString(),
-                    ];
-                })
-            ];
-
         }
+
+        $collection = \DB::table('audits')
+                ->where('user_id',auth()->id())
+                ->get();
+
+        return [
+            'data' => $collection->map(function($data) {
+                return [
+                    'id'         => $data->id,
+                    'user'       => \App\Models\User::find($data->user_id)->name . ' whose user id is '.$data->user_id,
+                    'event'      => $data->event,
+                    'old_values' => json_decode($data->old_values),
+                    'new_values' => json_decode($data->new_values),
+                    'url'        => $data->url,
+                    'ip_address' => $data->ip_address,
+                    'user_agent' => $data->user_agent,
+                    'created_at' => \Carbon\Carbon::parse($data->created_at)->toDayDateTimeString(),
+                    'updated_at' => \Carbon\Carbon::parse($data->updated_at)->toDayDateTimeString(),
+                ];
+            })
+        ];
 
     }
 }
