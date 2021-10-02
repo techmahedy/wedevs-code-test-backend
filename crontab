@@ -1,0 +1,7 @@
+#MY CRONTAB CODE FOR SCHEDULER
+Everyday 12:am all delivered order should be moved to delivers table
+
+#!/bin/sh
+PATH=/usr/local/bin:/usr/local/sbin:~/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/bin
+
+0 0 12 1/1 * ? * cd /var/www/html/wedevs_backed && php artisan schedule:run >> /dev/null 2>&1
