@@ -44,6 +44,7 @@ class OrderController extends Controller
                 $order->price = ($request->qty * $this->repository->price($request->product_id));
 
                 if($this->repository->checkStockExistsOrNot($request->product_id) && $order->save()){
+                    //let assume admin is only one
                     $user = User::getAdmin()->first();
                     $user->notify(new \App\Notifications\OrderCompleted($order));
                     return $this->success('Order Created Successfully!', $order, 'order', 200);
