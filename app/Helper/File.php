@@ -19,7 +19,7 @@ Trait File {
            $url             = $file->storeAs($this->public_path,$filenametostore);
            $public_path     = public_path($this->storage_path.$filenametostore);
            $img             = Image::make($public_path)->resize($width, $height);
-           
+           $url             = preg_replace( "/public/", "", $url );
            return $img->save($public_path) ? $url : '';
        }
     }
