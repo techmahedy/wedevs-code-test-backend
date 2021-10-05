@@ -19,7 +19,7 @@ class ProductController extends Controller
     
     public function __construct(Repository $repository)
     {  
-       if(property_exists($this,'repository')){
+       if( property_exists($this,'repository') ) {
            $this->repository = $repository;
        }
     }
@@ -52,10 +52,9 @@ class ProductController extends Controller
         }
         try {
 
-            if($files = $request->file('image')) {
-                $fileNameToStore = $this->generateImage($files);
-                $folder = '/products/images/';
-                $filePath = $folder . $fileNameToStore;
+            if( $file = $request->file('image') ) {
+                $path = 'products/images';
+                $url = $this->file($file,$path,300,400);
             }
 
             if ($request->expectsJson()) {
@@ -65,11 +64,10 @@ class ProductController extends Controller
                 $product->description = $request->description ? $request->description : '';
                 $product->price = $request->price;
                 $product->qty = $request->qty;
-                $product->image = $filePath;
+                $product->image = $url;
                 $product->user_id = auth()->id();
 
                 if($product->save()){
-                    $request->image->move(public_path($folder), $fileNameToStore);
                     return $this->success('Product Created Successfully!', $product, 'product', 200);
                 }
 
@@ -91,12 +89,11 @@ class ProductController extends Controller
 
         try {
 
-            if($files = $request->file('image')) {
-                $fileNameToStore = $this->generateImage($files);
-                $folder = '/products/images/';
-                $filePath = $folder . $fileNameToStore;
+            if($file = $request->file('image')) {
+                $path = 'products/images';
+                $url = $this->file($file,$path,300,400);
             }else{
-                $filePath = '';
+                $url = '';
             }
 
             if ($request->expectsJson()) {
@@ -106,12 +103,11 @@ class ProductController extends Controller
                 $product->description = $request->description ? $request->description : '';
                 $product->price = $request->price;
                 $product->qty = $request->qty;
-                $product->image = $filePath ? $filePath : $product->image;
+                $product->image = $url ? $url : $product->image;
                 $product->user_id = auth()->id();
 
                 if($product->save()){
                     //it would be great if we @unlick() previous image
-                    $filePath ? $request->image->move(public_path($folder), $fileNameToStore) : '';
                     return $this->success('Product Updated Successfully!', $product, 'product', 200);
                 }
 

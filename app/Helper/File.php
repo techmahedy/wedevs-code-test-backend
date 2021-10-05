@@ -2,17 +2,25 @@
 
 namespace App\Helper;
 
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Str;
+
 Trait File {
 
-    public function generateImage($files) : string
-    {
-        $filenameWithExt = $files->getClientOriginalName();
-        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        $filename = preg_replace("/[^A-Za-z0-9 ]/", '', $filename);
-        $filename = preg_replace("/\s+/", '-', $filename);
-        $extension = $files->getClientOriginalExtension();
-        $fileNameToStore = $filename.'_'.time().'.'.$extension;
+    public $public_path = "/public/uploadedImages/";
+    public $storage_path = "/storage/uploadedImages/";
 
-        return $fileNameToStore;
+    public function file($file,$path,$width,$height)
+    {
+       if ( $file ) {
+
+           $extension       = $file->getClientOriginalExtension();
+           $filenametostore = $path.'-'.Str::random(30).'.'.$extension;
+           $url             = $file->storeAs($this->public_path,$filenametostore);
+           $public_path     = public_path($this->storage_path.$filenametostore);
+           $img             = Image::make($public_path)->resize($width, $height);
+           
+           return $img->save($public_path) ? $url : '';
+       }
     }
 }
